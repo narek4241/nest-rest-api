@@ -6,17 +6,14 @@ import {
   Delete,
   Put,
   Body,
-  // Redirect,
   HttpCode,
   HttpStatus,
   Header,
-  // Req,
-  // Res,
 } from '@nestjs/common';
-// import { Request, Response } from 'express';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
+import { Product } from './schemas/products.schema';
 
 @Controller('products')
 export class ProductsController {
@@ -24,37 +21,33 @@ export class ProductsController {
 
   // #task #findOut decorators usage
   @Get()
-  getAll() {
+  getAll(): Promise<Product[]> {
     return this.productsService.getAll();
   }
 
-  // #note !res?opt
-  // @Get()
-  // getAll(@Req() req: Request, @Res() res: Response): string {
-  //   res.status(200).send({ status: 'Ok' });
-  //   return 'getAll';
-  // }
-
   @Get(':id')
   // @Redirect('https://www.google.com', 302)
-  getOne(@Param('id') id: string) {
+  getOne(@Param('id') id: string): Promise<Product> {
     return this.productsService.getById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @Header('Cache-Control', 'none')
-  create(@Body() createProductDto: CreateProductDto) {
+  create(@Body() createProductDto: CreateProductDto): Promise<Product> {
     return this.productsService.create(createProductDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productsService.delete(id);
+  remove(@Param('id') id: string): Promise<Product> {
+    return this.productsService.remove(id);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
     return this.productsService.update(id, updateProductDto);
   }
 }
